@@ -1,0 +1,4 @@
+interface:
+  display_name: "Legal Contract Review"
+  short_description: "Review and redline legal contracts by party"
+  default_prompt: "Use $legal-contract-review to gather my supported party, focus areas, and opponent comment authors, then draft clause risks, tracked revisions, and comment responses."
