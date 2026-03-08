@@ -285,6 +285,20 @@ def ensure_parent(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
 
+def validate_docx_output_path(path: Path, label: str) -> None:
+    if path.suffix.lower() != ".docx":
+        raise ValueError(f"{label} must be a .docx file: {path}")
+
+
+def assert_docx_written(path: Path, label: str) -> None:
+    if not path.exists():
+        raise FileNotFoundError(f"{label} was not created: {path}")
+    if path.suffix.lower() != ".docx":
+        raise ValueError(f"{label} must be a .docx file: {path}")
+    if path.stat().st_size == 0:
+        raise ValueError(f"{label} is empty: {path}")
+
+
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     ensure_parent(path)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
@@ -539,6 +553,9 @@ def command_init_review(args: argparse.Namespace) -> None:
 
 
 def command_materialize(args: argparse.Namespace) -> None:
+    validate_docx_output_path(args.amended_output, "Amended output")
+    validate_docx_output_path(args.report_output, "Risk report output")
+
     payload = load_json(args.review_json)
     edits = build_edit_list(payload)
     applied = apply_tracked_revisions(
@@ -548,6 +565,8 @@ def command_materialize(args: argparse.Namespace) -> None:
         author=args.author,
     )
     write_risk_report(payload, args.report_output)
+    assert_docx_written(args.amended_output, "Amended contract")
+    assert_docx_written(args.report_output, "Risk report")
 
     print(f"[OK] Wrote amended contract: {args.amended_output}")
     print(f"[OK] Wrote risk report: {args.report_output}")

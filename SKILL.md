@@ -16,6 +16,8 @@ Review a contract from one party's perspective and produce two deliverables: an 
 - Treat every clause as a separate review unit.
 - Identify opponent comments from Word comment threads and draft responses for each.
 - Provide practical risk explanations and concrete replacement language.
+- Always generate at least two `.docx` outputs for every completed review: one risk report and one tracked-changes contract.
+- Do not treat `.md`, `.json`, or chat-only analysis as the final deliverable unless the user explicitly asks for supplemental files in addition to the two required `.docx` files.
 - Keep legal analysis factual and action-oriented; avoid claiming legal representation.
 
 ## Workflow
@@ -60,14 +62,16 @@ Review a contract from one party's perspective and produce two deliverables: an 
        --report-output <contract.risk-report.docx> \
        --author "Codex Legal Reviewer"
      ```
+   - Do not stop after creating notes in markdown or JSON. Run `materialize` so both `.docx` outputs exist on disk.
 6. Verify output quality.
    - Confirm the amended document opens with tracked revisions visible in Word.
    - Confirm every reviewed clause appears in the risk report table.
    - Confirm the `Opponent Comment Responses` section includes stance and draft response text.
+   - Confirm both `<name>.amended.docx` and `<name>.risk-report.docx` were created successfully before declaring the task complete.
    - If paragraph matching misses a clause, adjust that clause's `target_paragraph_index` and rerun `materialize`.
 
 ## Output Contract
-Always deliver these files unless the user asks otherwise:
+Always deliver these files unless the user explicitly opts out of one of them:
 - `<name>.amended.docx`: contract with tracked insertion/deletion revisions.
 - `<name>.risk-report.docx`: clause-level risk analysis plus opponent comment response drafts.
 - `<name>.review.json`: completed review dataset used to produce both documents.
